@@ -19,6 +19,7 @@ const App = () => {
     <main className={cx(ROOT_STYLE, 'app')}>
       <h1>Modern text area</h1>
       <p>Will highlight words starting or ending with letter "n".</p>
+      <p>Will show pop up when cursor is on highlighted words.</p>
       <ModernTextArea onChange={setValue} value={value} />
     </main>
   );

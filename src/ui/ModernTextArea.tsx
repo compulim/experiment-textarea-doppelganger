@@ -1,5 +1,5 @@
 import { css, cx } from '@emotion/css';
-import { FormEventHandler, Fragment, useCallback } from 'react';
+import { FormEventHandler, Fragment, KeyboardEventHandler, useCallback, useMemo, useState } from 'react';
 import { useRefFrom } from 'use-ref-from';
 
 type Props = {
@@ -13,7 +13,8 @@ const ROOT_STYLE = css({
     position: 'relative',
 
     '--highlighter-color': 'yellow',
-    '--token-border-color': 'blue',
+    '--hover-color': 'orange',
+    '--token-border-color': 'blue'
   },
 
   '& .modern-text-area__doppelganger': {
@@ -41,6 +42,22 @@ const ROOT_STYLE = css({
     width: '100%'
   },
 
+  '& .modern-text-area__popup': {
+    backgroundColor: 'palegoldenrod',
+    border: 'solid 1px gray',
+    borderRadius: 4,
+    left: 0,
+    padding: '.2em',
+    position: 'absolute',
+    bottom: 'calc(2em - 10px)',
+    width: 100,
+    zIndex: 1
+  },
+
+  '& .modern-text-area__word': {
+    position: 'relative'
+  },
+
   '& .modern-text-area__word--highlight': {
     backgroundColor: 'var(--highlighter-color)',
     backgroundImage: 'url(./assets/images/squiggle.png)',
@@ -52,10 +69,21 @@ const ROOT_STYLE = css({
     outlineColor: 'var(--token-border-color)',
     outlineStyle: 'dotted',
     outlineWidth: '2px'
+  },
+
+  '& .modern-text-area__word--hover': {
+    backgroundColor: 'var(--hover-color)',
+    borderRadius: 4,
+    outlineColor: 'var(--hover-color)',
+    outlineStyle: 'dotted',
+    outlineWidth: '2px'
   }
 });
 
+const highlighter = (word: string) => /^n|n$/iu.test(word);
+
 const TextArea = ({ onChange, value }: Props) => {
+  const [cursorPosition, setCursorPosition] = useState(-1);
   const onChangeRef = useRefFrom(onChange);
 
   const handleChange = useCallback<FormEventHandler<HTMLTextAreaElement>>(
@@ -63,34 +91,65 @@ const TextArea = ({ onChange, value }: Props) => {
     [onChangeRef]
   );
 
-  const highlighter = (word: string) => /^n|n$/iu.test(word);
+  const handleSelect = useCallback<KeyboardEventHandler<HTMLTextAreaElement>>(
+    ({ currentTarget: { selectionEnd } }) => setCursorPosition(selectionEnd),
+    [setCursorPosition]
+  );
+
+  const wordAndPosition = useMemo(() => {
+    const wordAndPosition: [string, number][] = [];
+    let lastPosition = 0;
+    let lastWord = '';
+
+    value.split('').forEach(letter => {
+      if (letter === '\n' || letter === ' ') {
+        wordAndPosition.push([lastWord, lastPosition]);
+
+        lastPosition += lastWord.length + 1;
+        lastWord = '';
+
+        wordAndPosition.push([letter, lastPosition]);
+      } else {
+        lastWord += letter;
+      }
+    });
+
+    lastWord && wordAndPosition.push([lastWord, lastPosition]);
+
+    return wordAndPosition;
+  }, [value]);
 
   return (
     <div className={cx('modern-text-area', ROOT_STYLE)}>
       <div className="modern-text-area__doppelganger">
-        {value.split('\n').map(line => (
-          <Fragment>
-            <span>
-              {line.split(' ').map(word => (
-                <Fragment>
-                  <span
-                    className={cx('modern-text-area__word', {
-                      'modern-text-area__word--highlight': highlighter(word)
-                    })}
-                  >
-                    {word}
-                  </span>{' '}
-                </Fragment>
-              ))}
-            </span>
-            <br />
-          </Fragment>
-        ))}
+        {wordAndPosition.map(([word, position], index) =>
+          word === '\n' ? (
+            <br key={index} />
+          ) : word !== ' ' ? (
+            <Fragment>
+              <span
+                className={cx('modern-text-area__word', {
+                  'modern-text-area__word--highlight': highlighter(word),
+                  'modern-text-area__word--hover':
+                    cursorPosition >= position && cursorPosition <= position + word.length
+                })}
+              >
+                {word}
+                {highlighter(word) && cursorPosition >= position && cursorPosition <= position + word.length && (
+                  <div className={cx('modern-text-area__popup')}>Hello, {word}!</div>
+                )}
+              </span>
+            </Fragment>
+          ) : (
+            word
+          )
+        )}
       </div>
       <textarea
         autoFocus={true}
         className="modern-text-area__text-area"
         onChange={handleChange}
+        onSelect={handleSelect}
         spellCheck={false}
         value={value || ''}
       />
