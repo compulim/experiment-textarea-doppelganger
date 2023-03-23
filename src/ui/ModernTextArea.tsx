@@ -48,7 +48,7 @@ const ROOT_STYLE = css({
     borderRadius: 4,
     opacity: 1,
     outlineColor: 'var(--token-border-color)',
-    outlineStyle: 'solid',
+    outlineStyle: 'dotted',
     outlineWidth: '2px'
   }
 });
@@ -61,7 +61,7 @@ const TextArea = ({ onChange, value }: Props) => {
     [onChangeRef]
   );
 
-  const highlighter = (word: string) => /n$/.test(word);
+  const highlighter = (word: string) => /^n|n$/iu.test(word);
 
   return (
     <div className={cx('modern-text-area', ROOT_STYLE)}>
