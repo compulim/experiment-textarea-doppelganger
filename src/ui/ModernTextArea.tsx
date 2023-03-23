@@ -126,7 +126,7 @@ const TextArea = ({ onChange, value }: Props) => {
           word === '\n' ? (
             <br key={index} />
           ) : word !== ' ' ? (
-            <Fragment>
+            <Fragment key={index}>
               <span
                 className={cx('modern-text-area__word', {
                   'modern-text-area__word--highlight': highlighter(word),
