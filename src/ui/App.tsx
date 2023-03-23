@@ -5,9 +5,8 @@ import ModernTextArea from './ModernTextArea';
 
 const ROOT_STYLE = css({
   '&.app': {
-    backgroundColor: '#ffdd99',
-    height: 200,
-    width: '100%'
+    margin: 10,
+    width: 360
   }
 });
 
@@ -18,6 +17,8 @@ const App = () => {
 
   return (
     <main className={cx(ROOT_STYLE, 'app')}>
+      <h1>Modern text area</h1>
+      <p>Will highlight words ending in "n".</p>
       <ModernTextArea onChange={setValue} value={value} />
     </main>
   );

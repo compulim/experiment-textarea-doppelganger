@@ -1,29 +1,32 @@
 import { css, cx } from '@emotion/css';
-import { FormEventHandler, useCallback } from 'react';
+import { FormEventHandler, Fragment, useCallback } from 'react';
 import { useRefFrom } from 'use-ref-from';
 
 type Props = {
   onChange?: (value: string) => void;
-  value?: string;
+  value: string;
 };
 
 const ROOT_STYLE = css({
   '&.modern-text-area': {
     backgroundColor: 'rgba(0, 0, 255, .1)',
-    position: 'relative'
+    position: 'relative',
+
+    '--highlighter-color': 'yellow',
+    '--token-border-color': 'blue',
   },
 
   '& .modern-text-area__doppelganger': {
-    backgroundColor: 'rgba(255, 0, 0, .2)',
-    color: 'rgba(255, 0, 0, .4)',
+    backgroundColor: 'transparent',
+    color: 'transparent',
     fontFamily: 'Consolas, monospace',
     whiteSpace: 'pre-wrap'
   },
 
   '& .modern-text-area__text-area': {
-    backgroundColor: 'rgba(0, 255, 0, .2)',
+    backgroundColor: 'transparent',
     border: 0,
-    color: 'rgba(0, 0, 255, .4)',
+    color: 'black',
     flex: 1,
     fontFamily: 'Consolas, monospace',
     fontSize: 'inherit',
@@ -34,6 +37,19 @@ const ROOT_STYLE = css({
     position: 'absolute',
     top: 0,
     width: '100%'
+  },
+
+  '& .modern-text-area__word--highlight': {
+    backgroundColor: 'var(--highlighter-color)',
+    backgroundImage: 'url(./assets/images/squiggle.png)',
+    backgroundPositionY: '100%',
+    backgroundRepeat: 'repeat-x',
+    backgroundSize: 'auto .5em',
+    borderRadius: 4,
+    opacity: 1,
+    outlineColor: 'var(--token-border-color)',
+    outlineStyle: 'solid',
+    outlineWidth: '2px'
   }
 });
 
@@ -45,10 +61,37 @@ const TextArea = ({ onChange, value }: Props) => {
     [onChangeRef]
   );
 
+  const highlighter = (word: string) => /n$/.test(word);
+
   return (
     <div className={cx('modern-text-area', ROOT_STYLE)}>
-      <div className="modern-text-area__doppelganger">{value}</div>
-      <textarea autoFocus={true} className="modern-text-area__text-area" onChange={handleChange} value={value || ''} />
+      <div className="modern-text-area__doppelganger">
+        {value.split('\n').map(line => (
+          <Fragment>
+            <span>
+              {line.split(' ').map(word => (
+                <Fragment>
+                  <span
+                    className={cx('modern-text-area__word', {
+                      'modern-text-area__word--highlight': highlighter(word)
+                    })}
+                  >
+                    {word}
+                  </span>{' '}
+                </Fragment>
+              ))}
+            </span>
+            <br />
+          </Fragment>
+        ))}
+      </div>
+      <textarea
+        autoFocus={true}
+        className="modern-text-area__text-area"
+        onChange={handleChange}
+        spellCheck={false}
+        value={value || ''}
+      />
     </div>
   );
 };
