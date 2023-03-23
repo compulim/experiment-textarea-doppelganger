@@ -18,9 +18,10 @@ const ROOT_STYLE = css({
 
   '& .modern-text-area__doppelganger': {
     backgroundColor: 'transparent',
-    color: 'transparent',
+    color: 'rgba(0, 0, 0, .4)',
     fontFamily: 'Consolas, monospace',
-    whiteSpace: 'pre-wrap'
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word'
   },
 
   '& .modern-text-area__text-area': {
