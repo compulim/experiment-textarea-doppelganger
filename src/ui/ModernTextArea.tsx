@@ -35,6 +35,7 @@ const ROOT_STYLE = css({
     overflow: 'hidden',
     padding: 0,
     position: 'absolute',
+    resize: 'none',
     top: 0,
     width: '100%'
   },
