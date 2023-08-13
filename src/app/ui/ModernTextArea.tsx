@@ -116,6 +116,10 @@ const TextArea = ({ onChange, value }: Props) => {
 
     lastWord && wordAndPosition.push([lastWord, lastPosition]);
 
+    // Need a trailing zero-width space to make sure the last empty new line is not trimmed.
+    // If there is a better CSS not to trim the trailing newline, we should use that instead.
+    wordAndPosition.push(['\u200B', lastPosition + lastWord.length]);
+
     return wordAndPosition;
   }, [value]);
 
