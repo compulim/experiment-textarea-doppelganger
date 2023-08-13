@@ -9,9 +9,6 @@ jobs:
       name: admin
       url: ${{ steps.summary.outputs.url }}
     name: Bump scaffold
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-latest
 
     steps:
@@ -62,7 +59,9 @@ jobs:
             echo has-changes=true >> $GITHUB_OUTPUT
           fi
 
-      - id: commit-and-push
+      - env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        id: commit-and-push
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Commit and push
         run: |
