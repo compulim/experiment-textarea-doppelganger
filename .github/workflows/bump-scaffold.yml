@@ -24,6 +24,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: ./current
+          token: ${{ secrets.GH_TOKEN }}
 
       - env:
           GH_TOKEN: ${{ github.token }}
@@ -67,9 +68,7 @@ jobs:
             echo has-changes=true >> $GITHUB_OUTPUT
           fi
 
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        id: commit-and-push
+      - id: commit-and-push
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Commit and push
         run: |
@@ -87,7 +86,7 @@ jobs:
           echo Branch created at [\`${{ steps.create-branch.outputs.branch-name }}\`]\($URL\). >> $GITHUB_STEP_SUMMARY
 
       - env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         id: create-pull-request
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Create pull request
