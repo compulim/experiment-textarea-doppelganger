@@ -63,6 +63,8 @@ jobs:
         run: |
           cd ./current/
 
+          git status
+
           if [[ `git ls-files --deleted --modified --others | wc -l` -gt 0 ]]
           then
             echo has-changes=true >> $GITHUB_OUTPUT
