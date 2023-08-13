@@ -5,6 +5,9 @@ on:
 
 jobs:
   bump-scaffold:
+    environment:
+      name: admin
+      url: ${{ steps.summary.outputs.url }}
     name: Bump scaffold
     permissions:
       contents: write
@@ -59,7 +62,8 @@ jobs:
             echo has-changes=true >> $GITHUB_OUTPUT
           fi
 
-      - if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
+      - id: commit-and-push
+        if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Commit and push
         run: |
           cd ./current
@@ -70,10 +74,14 @@ jobs:
           git commit -a -m "Bump scaffold"
           git push -u origin ${{ steps.create-branch.outputs.branch-name }}
 
-          echo Branch created at [\`${{ steps.create-branch.outputs.branch-name }}\`]\(${{ github.server }}/${{ github.repository }}/compare/${{ steps.create-branch.outputs.branch-name }}?expand=1\). >> $GITHUB_STEP_SUMMARY
+          URL=${{ github.server }}/${{ github.repository }}/compare/${{ steps.create-branch.outputs.branch-name }}?expand=1
+          echo url=$URL >> $GITHUB_OUTPUT
+
+          echo Branch created at [\`${{ steps.create-branch.outputs.branch-name }}\`]\($URL\). >> $GITHUB_STEP_SUMMARY
 
       - env:
           GH_TOKEN: ${{ github.token }}
+        id: create-pull-request
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Create pull request
         run: |
@@ -83,5 +91,11 @@ jobs:
 
           if [[ ! -z "$URL" ]]
           then
+            echo url=$URL >> $GITHUB_OUTPUT
             echo Pull request created at $URL. >> $GITHUB_STEP_SUMMARY
           fi
+
+      - id: summary
+        if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
+        name: Summary
+        run: echo url=${{ steps.create-pull-request.outputs.url || steps.commit-and-push.outputs.url }} >> $GITHUB_OUTPUT
