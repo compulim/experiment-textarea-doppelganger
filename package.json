@@ -19,16 +19,16 @@
     "start:typescript": "npm run build:typescript -- --watch"
   },
   "dependencies": {
-    "@emotion/css": "^11.10.6",
+    "@emotion/css": "^11.11.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "use-ref-from": "^0.0.2"
   },
   "devDependencies": {
-    "@types/react": "^18.0.28",
-    "@types/react-dom": "^18.0.11",
-    "concurrently": "^7.6.0",
-    "esbuild": "^0.17.12",
-    "typescript": "^5.0.2"
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "concurrently": "^8.2.0",
+    "esbuild": "^0.19.1",
+    "typescript": "^5.1.6"
   }
 }
