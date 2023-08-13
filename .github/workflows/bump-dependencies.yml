@@ -49,7 +49,7 @@ jobs:
           then
             echo has-changes=true >> $GITHUB_OUTPUT
 
-            git show :package.json | jq '{ dependencies: .dependencies, devDependences: .devDependencies }' > /tmp/current.json
+            git show HEAD:package.json | jq '{ dependencies: .dependencies, devDependences: .devDependencies }' > /tmp/current.json
             cat package.json | jq '{ dependencies: .dependencies, devDependences: .devDependencies }' > /tmp/next.json
 
             echo \`\`\`diff >> $GITHUB_STEP_SUMMARY
