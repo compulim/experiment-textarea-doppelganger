@@ -28,8 +28,6 @@ jobs:
       - id: get-changes
         name: Get changes
         run: |
-          cd ./current/
-
           if [[ `git ls-files --deleted --modified --others | wc -l` -gt 0 ]]
           then
             echo has-changes=true >> $GITHUB_OUTPUT
@@ -38,8 +36,6 @@ jobs:
       - if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Commit and push
         run: |
-          cd ./current
-
           git config user.email "${{ format('@{0}', github.actor) }}"
           git config user.name "${{ format('@{0}', github.actor) }}"
 
@@ -53,8 +49,6 @@ jobs:
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Create pull request
         run: |
-          cd ./current
-
           URL=`gh pr create --fill --repo ${{ github.repository }} || true` >> $GITHUB_OUTPUT
 
           if [[ ! -z "$URL" ]]
