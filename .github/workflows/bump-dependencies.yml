@@ -1,7 +1,13 @@
 name: Bump dependencies
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      exact-prod:
+        default: false
+        description: Exact version for production dependencies
+        required: true
+        type: boolean
 
 jobs:
   bump-dependencies:
@@ -23,7 +29,10 @@ jobs:
           git checkout -b $BRANCH_NAME
           echo branch-name=$BRANCH_NAME >> $GITHUB_OUTPUT
 
-      - run: npm run bump
+      - env:
+          BUMP_DEV_OPTIONS: ''
+          BUMP_PROD_OPTIONS: ${{ inputs.exact-prod && '--save-exact' || '' }}
+        run: npm run bump
 
       - id: get-changes
         name: Get changes
