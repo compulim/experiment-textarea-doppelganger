@@ -46,3 +46,4 @@ runs:
         echo \`\`\`json >> $GITHUB_STEP_SUMMARY
         cat package.json | jq '{ dependencies: .dependencies, devDependences: .devDependencies }' >> $GITHUB_STEP_SUMMARY
         echo \`\`\` >> $GITHUB_STEP_SUMMARY
+      shell: bash
