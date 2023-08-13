@@ -80,7 +80,7 @@ jobs:
           git commit -a -m "Bump scaffold"
           git push -u origin ${{ steps.create-branch.outputs.branch-name }}
 
-          URL=${{ github.server }}/${{ github.repository }}/compare/${{ steps.create-branch.outputs.branch-name }}?expand=1
+          URL=${{ github.server_url }}/${{ github.repository }}/compare/${{ steps.create-branch.outputs.branch-name }}?expand=1
           echo url=$URL >> $GITHUB_OUTPUT
 
           echo Branch created at [\`${{ steps.create-branch.outputs.branch-name }}\`]\($URL\). >> $GITHUB_STEP_SUMMARY
