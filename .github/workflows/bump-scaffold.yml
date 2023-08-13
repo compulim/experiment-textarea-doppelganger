@@ -1,5 +1,13 @@
 name: Bump scaffold
 
+# To run this workflow:
+#
+# - Creates an environment named "admin"
+# - Adds a secret named GH_TOKEN with the following permissions to this repository:
+#   - contents: write
+#   - pull-requests: write
+#   - workflows: write
+
 on:
   workflow_dispatch: {}
 
@@ -60,7 +68,7 @@ jobs:
           fi
 
       - env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         id: commit-and-push
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Commit and push
@@ -79,7 +87,7 @@ jobs:
           echo Branch created at [\`${{ steps.create-branch.outputs.branch-name }}\`]\($URL\). >> $GITHUB_STEP_SUMMARY
 
       - env:
-          GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         id: create-pull-request
         if: ${{ steps.get-changes.outputs.has-changes == 'true' }}
         name: Create pull request
